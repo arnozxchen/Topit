@@ -241,13 +241,15 @@ struct OverlayViewOpacity: View {
                     if axWindow == nil { axWindow = getAXWindow(windowID: window.windowID) }
                 }
             }
-            if let pos = getCloseButtonLocalCenter(windowFrame: window.frame, axWindow: axWindow) {
+            let mainScreenHeight = NSScreen.screens.first(where: { $0.isMainScreen })?.frame.height ?? 0
+            if let pos = getCloseButtonLocalCenter(windowFrame: window.frame, mainScreenHeight: mainScreenHeight, axWindow: axWindow) {
                 let defaultCenterX: CGFloat = buttonPosition < 2 ? 14 : (window.frame.width - 14)
                 let defaultCenterY: CGFloat = buttonPosition % 2 == 0 ? 14 : (window.frame.height - 14)
                 closeButtonOffset = CGPoint(x: pos.x - defaultCenterX, y: pos.y - defaultCenterY)
-                print("[Topit] Button offset calculated: (\\(closeButtonOffset.x), \\(closeButtonOffset.y)), defaultCenter: (\\(defaultCenterX), \\(defaultCenterY))")
+                print("[Topit] Button offset calculated: (\(closeButtonOffset.x), \(closeButtonOffset.y)), defaultCenter: (\(defaultCenterX), \(defaultCenterY))")
             } else {
-                print("[Topit] AX close button detection failed, hasAxWindow=\\(axWindow != nil)")
+                // AX detection failed — use hardcoded fallback offset for standard macOS close button
+                print("[Topit] AX close button detection failed, hasAxWindow=\(axWindow != nil)")
             }
             hideWindow()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
