@@ -336,8 +336,9 @@ func getCloseButtonLocalCenter(windowFrame: CGRect, axWindow: AXUIElement?) -> C
     // Overlay-local: overlay top-left origin, y-down
     // Overlay frame == windowFrame (CGWindow)
     let buttonCenterX = axPosition.x - windowFrame.origin.x + axSize.width / 2
-    let buttonCenterY = windowFrame.height - (axPosition.y - windowFrame.origin.y) + axSize.height / 2
+    let buttonCenterY = windowFrame.height - (axPosition.y - windowFrame.origin.y + axSize.height / 2)
 
+    print("[Topit] AX close button detected — overlay-local center: (\\(buttonCenterX), \\(buttonCenterY)), windowFrame: \\(windowFrame)")
     return CGPoint(x: buttonCenterX, y: buttonCenterY)
 }
 

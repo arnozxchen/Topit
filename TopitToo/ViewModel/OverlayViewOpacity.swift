@@ -245,6 +245,9 @@ struct OverlayViewOpacity: View {
                 let defaultCenterX: CGFloat = buttonPosition < 2 ? 14 : (window.frame.width - 14)
                 let defaultCenterY: CGFloat = buttonPosition % 2 == 0 ? 14 : (window.frame.height - 14)
                 closeButtonOffset = CGPoint(x: pos.x - defaultCenterX, y: pos.y - defaultCenterY)
+                print("[Topit] Button offset calculated: (\\(closeButtonOffset.x), \\(closeButtonOffset.y)), defaultCenter: (\\(defaultCenterX), \\(defaultCenterY))")
+            } else {
+                print("[Topit] AX close button detection failed, hasAxWindow=\\(axWindow != nil)")
             }
             hideWindow()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
