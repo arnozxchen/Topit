@@ -1,6 +1,6 @@
 //
 //  WindowHighlighter.swift
-//  Topit
+//  TopitToo
 //
 //  Created by apple on 2024/11/26.
 //
@@ -62,7 +62,7 @@ class WindowHighlighter {
             cover.ignoresMouseEvents = true
             cover.isReleasedWhenClosed = false
             cover.collectionBehavior = [.canJoinAllSpaces, .stationary]
-            cover.title = "Topit Screen Cover"
+            cover.title = "TopitToo Screen Cover"
             cover.orderFront(self)
         }
         
@@ -79,7 +79,7 @@ class WindowHighlighter {
         
     func stopMouseMonitor() {
         DispatchQueue.main.async {
-            for w in NSApp.windows.filter({ $0.title == "Topit Screen Cover" }) { w.close() }
+            for w in NSApp.windows.filter({ $0.title == "TopitToo Screen Cover" }) { w.close() }
         }
         if let monitor = mouseMonitor {
             NSEvent.removeMonitor(monitor)
@@ -98,7 +98,7 @@ class WindowHighlighter {
             return
         }
         
-        if let app = targetWindow["kCGWindowOwnerName"] as? String, app != "Topit",
+        if let app = targetWindow["kCGWindowOwnerName"] as? String, app != "TopitToo",
            let windowID = targetWindow["kCGWindowNumber"] as? Int, targetWindowID != windowID {
             mask?.close()
             targetWindowID = windowID
@@ -115,7 +115,7 @@ class WindowHighlighter {
                         styleMask: [.nonactivatingPanel, .fullSizeContentView], backing: .buffered, defer: false)
         let contentView = NSHostingView(rootView: HighlightMask(app: app, title: title, windowID: windowID))
         mask?.contentView = contentView
-        mask?.title = "Topit Mask Window"
+        mask?.title = "TopitToo Mask Window"
         mask?.hasShadow = false
         mask?.sharingType = .none
         mask?.backgroundColor = .clear

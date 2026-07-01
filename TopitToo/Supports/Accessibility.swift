@@ -1,6 +1,6 @@
 //
 //  Accessibility.swift
-//  Topit
+//  TopitToo
 //
 //  Created by apple on 2024/11/18.
 //
@@ -46,7 +46,7 @@ func getAppIcon(_ app: SCRunningApplication) -> NSImage? {
 }
 
 func createNewWindow(display: SCDisplay, window: SCWindow, opacity: Double? = nil) {
-    let title = "Topit Layer\(window.windowID)\(opacity == nil ? "" : "O")"
+    let title = "TopitToo Layer\(window.windowID)\(opacity == nil ? "" : "O")"
     var panel: NSWindow!
     var contentView: NSView!
     
