@@ -31,6 +31,7 @@ struct OverlayView12: View {
     @AppStorage("keepFocus") private var keepFocus: Bool = true
     @AppStorage("miniButton") private var miniButton: Bool = true
     @AppStorage("buttonPosition") private var buttonPosition: Int = 0
+    @State private var closeButtonOffset: CGPoint = .zero
     
     var body: some View {
         ZStack(alignment: Alignment(
@@ -111,6 +112,7 @@ struct OverlayView12: View {
                     overButtons = hovering
                     nsWindow?.makeKeyAndOrderFront(self)
                 }
+                .offset(x: closeButtonOffset.x, y: closeButtonOffset.y)
                 .padding(4)
                 .background(
                     RoundedRectangle(cornerRadius: 11, style: .continuous)
@@ -147,6 +149,11 @@ struct OverlayView12: View {
                 checkMouseLocation()
             }
             axWindow = getAXWindow(windowID: window.windowID)
+            if let pos = getCloseButtonLocalCenter(windowFrame: window.frame, axWindow: axWindow) {
+                let defaultCenterX: CGFloat = buttonPosition < 2 ? 14 : (window.frame.width - 14)
+                let defaultCenterY: CGFloat = buttonPosition % 2 == 0 ? 14 : (window.frame.height - 14)
+                closeButtonOffset = CGPoint(x: pos.x - defaultCenterX, y: pos.y - defaultCenterY)
+            }
             Task { await cm.startCapture(display: display, window: window) }
         }
         .onChange(of: cm.capturing) { newValue in if !newValue { nsWindow?.close() }}

@@ -41,6 +41,7 @@ struct OverlayViewOpacity: View {
     @AppStorage("keepFocus") private var keepFocus: Bool = false
     @AppStorage("showBorder") private var showBorder: Bool = false
     @AppStorage("buttonPosition") private var buttonPosition: Int = 0
+    @State private var closeButtonOffset: CGPoint = .zero
     
     var body: some View {
         ZStack(alignment: Alignment(
@@ -224,6 +225,7 @@ struct OverlayViewOpacity: View {
                     }
                 }
                 .padding(4)
+                .offset(x: closeButtonOffset.x, y: closeButtonOffset.y)
                 .onHover { hovering in
                     overButtons = hovering
                     if !pausing { nsWindow?.makeKeyAndOrderFront(self) }
@@ -238,6 +240,11 @@ struct OverlayViewOpacity: View {
                 if axWindow == nil { axWindow = getAXWindow(windowID: window.windowID)
                     if axWindow == nil { axWindow = getAXWindow(windowID: window.windowID) }
                 }
+            }
+            if let pos = getCloseButtonLocalCenter(windowFrame: window.frame, axWindow: axWindow) {
+                let defaultCenterX: CGFloat = buttonPosition < 2 ? 14 : (window.frame.width - 14)
+                let defaultCenterY: CGFloat = buttonPosition % 2 == 0 ? 14 : (window.frame.height - 14)
+                closeButtonOffset = CGPoint(x: pos.x - defaultCenterX, y: pos.y - defaultCenterY)
             }
             hideWindow()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {

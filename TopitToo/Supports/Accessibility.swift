@@ -306,6 +306,42 @@ func closeAXWindow(_ axWindow: AXUIElement?) -> Bool {
     return false
 }
 
+/// Get the close button center position in overlay-local coordinates (top-left origin, y-down).
+/// Returns nil if AXUIElement cannot access the close button (e.g. Electron/Java apps).
+func getCloseButtonLocalCenter(windowFrame: CGRect, axWindow: AXUIElement?) -> CGPoint? {
+    guard let axWindow = axWindow else { return nil }
+
+    var closeButtonRef: CFTypeRef?
+    let result = AXUIElementCopyAttributeValue(axWindow, kAXCloseButtonAttribute as CFString, &closeButtonRef)
+    guard result == .success, let closeButton = closeButtonRef else { return nil }
+
+    let closeButtonElement = closeButton as! AXUIElement
+
+    var positionValue: CFTypeRef?
+    var sizeValue: CFTypeRef?
+    var axPosition = CGPoint.zero
+    var axSize = CGSize.zero
+
+    guard AXUIElementCopyAttributeValue(closeButtonElement, kAXPositionAttribute as CFString, &positionValue) == .success,
+          AXUIElementCopyAttributeValue(closeButtonElement, kAXSizeAttribute as CFString, &sizeValue) == .success else {
+        return nil
+    }
+
+    let position = positionValue as! AXValue
+    AXValueGetValue(position, .cgPoint, &axPosition)
+    let size = sizeValue as! AXValue
+    AXValueGetValue(size, .cgSize, &axSize)
+
+    // AX coords: screen bottom-left origin, y-up
+    // Overlay-local: overlay top-left origin, y-down
+    // Overlay frame == windowFrame (CGWindow)
+    let buttonCenterX = axPosition.x - windowFrame.origin.x + axSize.width / 2
+    let buttonCenterY = windowFrame.height - (axPosition.y - windowFrame.origin.y) + axSize.height / 2
+
+    return CGPoint(x: buttonCenterX, y: buttonCenterY)
+}
+
+
 // AXValue 扩展，便于设置值
 extension AXValue {
     static func from(point: inout CGPoint) -> AXValue {

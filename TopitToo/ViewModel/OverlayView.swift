@@ -62,6 +62,7 @@ struct OverlayView: View {
     @AppStorage("keepFocus") private var keepFocus: Bool = false
     @AppStorage("autoAvoid") private var autoAvoid: Bool = true
     @AppStorage("buttonPosition") private var buttonPosition: Int = 0
+    @State private var closeButtonOffset: CGPoint = .zero
     
     var body: some View {
         ZStack(alignment: Alignment(
@@ -235,6 +236,7 @@ struct OverlayView: View {
                     }
                 }
                 .padding(4)
+                .offset(x: closeButtonOffset.x, y: closeButtonOffset.y)
                 .focusable(false)
                 .onHover { hovering in
                     overButtons = hovering
@@ -249,6 +251,12 @@ struct OverlayView: View {
                 if axWindow == nil { axWindow = getAXWindow(windowID: window.windowID)
                     if axWindow == nil { axWindow = getAXWindow(windowID: window.windowID) }
                 }
+            }
+            if let pos = getCloseButtonLocalCenter(windowFrame: window.frame, axWindow: axWindow) {
+                // Default button center at current position (padding 4 + button radius 10)
+                let defaultCenterX: CGFloat = buttonPosition < 2 ? 14 : (window.frame.width - 14)
+                let defaultCenterY: CGFloat = buttonPosition % 2 == 0 ? 14 : (window.frame.height - 14)
+                closeButtonOffset = CGPoint(x: pos.x - defaultCenterX, y: pos.y - defaultCenterY)
             }
             Task {
                 await cm.startCapture(display: display, window: window)
